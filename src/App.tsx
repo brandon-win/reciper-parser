@@ -2,7 +2,7 @@ import React from 'react'
 
 const App: React.FC = () => {
     return (
-        <section className=''>
+        <section className='container'>
             <h1>Recipe browser</h1>            
         </section>
     )
