@@ -60,21 +60,12 @@ const UrlParser: React.FC = () => {
         setMetadata(recipe)
     }
 
-    const onUrlInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUrl(e.target.value)
-    }
-
     const onButtonClick = async (link: string) => {
         await getWebsiteInfo(link)
     }
 
     return (
         <>
-            {/* <input 
-                value={url} 
-                placeholder="Add a URL!" 
-                onChange={onUrlInputChange}
-            /> */}
             <button onClick={() => onButtonClick(url)}>Get Recipe Metadata</button>
 
             <ul>
