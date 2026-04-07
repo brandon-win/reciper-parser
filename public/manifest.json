@@ -1,0 +1,13 @@
+{
+    "name": "Brandon's Recipe Parser",
+    "description": "This extension is intended to be used to gather recipe metadata to a specific google doc.",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "index.html"
+    },
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ]
+}
