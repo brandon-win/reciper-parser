@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-
+import React, {useState, useEffect} from 'react'
+import {GoogleFileBrowser} from './GoogleFileBrowser'
 
 interface RecipeMetaData {
     recipeName: string
@@ -67,14 +67,13 @@ const UrlParser: React.FC = () => {
     return (
         <>
             <button onClick={() => onButtonClick(url)}>Get Recipe Metadata</button>
-
             <ul>
                 <li>Recipe Name: {metadata.recipeName}</li>
                 <li>Cuisine: {metadata.cuisine}</li>
                 <li>Category: {metadata.category}</li>
                 <li>Link: {metadata.link}</li>
-
             </ul>
+            <GoogleFileBrowser />
         </>
     )
 
