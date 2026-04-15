@@ -1,28 +1,21 @@
 import {useState} from 'react'
-import {useGoogle} from './useGoogle.ts'
+import {useAuthContext} from './contexts/AuthContext'
 
 
 const GoogleFileBrowser = () => {  
         const [files, setFiles] = useState([])
-
-        const {        
-            token,
-            getUserAuthToken,
-            logout,
-            loading,
-            error,
-    } = useGoogle()
-    
-    if (!token) {
-        return (
-            <button onClick={getUserAuthToken} disabled={loading}>
-                Connect Google Drive
-            </button>
-        )
-    }
-
+        const {user, login, loading, error, logout} = useAuthContext()
+        console.log({error})
     return (
         <>
+            <button onClick={login} disabled={user || loading}>
+                Connect Google Account
+            </button>
+            <button onClick={logout}>Sign Out</button>
+            {error && <p style={{color: 'red'}}>{error}</p>}
+            {user && (
+                <h3>Welcome, {user.displayName}</h3>
+            )}
             <h3>Recent Drive Files</h3>
             <ul>
                 {files.map((file) => {

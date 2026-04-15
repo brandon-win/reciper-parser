@@ -43,11 +43,8 @@ const UrlParser: React.FC = () => {
     }
 
     const getWebsiteInfo = async (link) => {
-        const res = await fetch(link)
-        const text = await res.text()
-        const parser = new DOMParser()
-        const doc = parser.parseFromString(text, 'text/html')
-        const jsonLdScript = doc.querySelector('script[type="application/ld+json"]');
+        const jsonLdScript = document.querySelector('script[type="application/ld+json"]');
+        console.log({jsonLdScript})
         const metadata = JSON.parse(jsonLdScript?.innerText);
         const obj = metadata["@graph"]
         const recipeObject = obj.find((ele) => ele["@type"] === "Recipe")

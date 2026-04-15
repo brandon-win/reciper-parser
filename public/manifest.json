@@ -7,20 +7,32 @@
         "default_popup": "index.html"
     },
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "background.js",
+        "type": "module"
     },
     "oauth2": {
         "client_id": "425199555875-jglvqsa4k5i8rg13jma8urcqiqqrb5k5.apps.googleusercontent.com",
         "scopes": [
-            "https://www.googleapis.com/auth/userinfo.email",
+            "openid",
+            "email",
+            "profile",
             "https://www.googleapis.com/auth/spreadsheets",
             "https://www.googleapis.com/auth/drive.file"
         ]
     },
     "permissions": [
+        "storage",
         "identity",
         "identity.email",
         "activeTab",
         "scripting"
-    ]
+    ],
+    "host_permissions" : [
+        "https://*.firebaseio.com/*",
+        "https://*.googleapis.com/*"
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://securetoken.googleapis.com; object-src 'self'"
+    }
+
 }

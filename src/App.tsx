@@ -1,5 +1,6 @@
 import React from 'react'
-import {UrlParser} from './UrlParser.tsx'
+import {UrlParser} from './UrlParser'
+import { AuthProvider } from './contexts/AuthContext.tsx'
 
 const App: React.FC = () => {
     return (
@@ -10,4 +11,10 @@ const App: React.FC = () => {
     )
 }
 
-export default App
+const AppWithAuth = () => (
+    <AuthProvider>
+        <App />
+    </AuthProvider>
+)
+
+export default AppWithAuth
