@@ -11,6 +11,7 @@ const useAuth = () => {
 
     const fetchUser = async () => {
         setLoading(true)
+        setError(null)
         try {
             const {
                 success, 
@@ -33,6 +34,7 @@ const useAuth = () => {
 
     const login = useCallback(async () => {
         setLoading(true)
+        setError(null)
         try {
             const {
                 success, 
@@ -54,6 +56,7 @@ const useAuth = () => {
 
     const logout = useCallback(async () => {
         setLoading(true)
+        setError(null)
         try {
             const {
                 success, 

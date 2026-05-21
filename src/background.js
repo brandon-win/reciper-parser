@@ -1,5 +1,6 @@
 import {GoogleAuthProvider, signInWithCredential, signOut} from 'firebase/auth/web-extension';
 import {initFirebase} from './firebase.ts'
+import {getWebsiteInfo} from './background-helpers/url-parser.ts'
 
 const {auth} = initFirebase()
 
@@ -18,8 +19,6 @@ const getGoogleToken = () => {
 const signIn = async () => {
   const token = await getGoogleToken();
   await chrome.storage.local.set({googleAccessToken: token});
-  GoogleAuthProvider.addScope('email')
-  GoogleAuthProvider.addScope('profile')
   const credential = GoogleAuthProvider.credential(null, token);
   const res = await signInWithCredential(auth, credential);
   const user = res.user;
@@ -32,6 +31,26 @@ const signOutUser = async () => {
         chrome.identity.removeCachedAuthToken({token})
     }
     await signOut(auth)
+}
+
+const getRecipeMetadata = async () => {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    if (!tab || !tab.id) {
+        throw new Error("No active tab found");
+    }
+
+    const [tabInfo] = await chrome.scripting.executeScript({ 
+        target: { tabId: tab.id },
+        func: () => (document.querySelector('script[type="application/ld+json"]')?.innerText ?? null)
+    });
+
+    if (!tabInfo) {
+      throw new Error('No metadata found')
+    }
+
+    const body = tabInfo.result    
+    return getWebsiteInfo({body, link: tab.url})
 }
 
 chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
@@ -59,8 +78,39 @@ chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
                 } 
             });
         } else {
-            sendResponse({success: false, error: "No user signed in"});
+            sendResponse({success: false, error: "No user signed in."});
         }
+    }
+
+    if (request.action === "PARSE_SITE") {
+      getRecipeMetadata()
+        .then((data) => sendResponse({success: true, data}))
+        .catch((error) => sendResponse({success: false, error: `Failed to get recipe data. ${error.message}`}))
+    }
+
+    if (request.action === "LIST_DRIVE_FILES") {
+      new Promise((resolve, reject) => {
+        chrome.identity.getAuthToken({
+          interactive: true,
+          scopes: [
+            "https://www.googleapis.com/auth/drive.readonly"
+          ]
+        }, (token) => {
+          if (chrome.runtime.lastError || !token) reject(chrome.runtime.lastError);
+          else resolve(token);
+        });
+      })
+        .then(async (token) => {
+          const query = encodeURIComponent("mimeType='application/vnd.google-apps.spreadsheet' and trashed=false");
+          const url = `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&orderBy=modifiedTime desc`;
+          const res = await fetch(url, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          console.log({res})
+          const data = await res.json();
+          sendResponse({ success: true, files: data.files });
+        })
+        .catch((error) => sendResponse({ success: false, error: `Failed to list Drive files: ${error.message}` }));
     }
 
     return true
