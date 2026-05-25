@@ -12,10 +12,10 @@ const UrlParser: React.FC<IUrlParser> = ({metadata, onGetRecipeButtonClick}) => 
         <>
             <button onClick={onGetRecipeButtonClick}>Get Recipe Metadata</button>
             <ul>
-                <li>Recipe Name: {metadata.recipeName}</li>
-                <li>Cuisine: {metadata.cuisine}</li>
-                <li>Category: {metadata.category}</li>
-                <li>Link: {metadata.link}</li>
+                <li>Recipe Name: {metadata?.recipeName}</li>
+                <li>Cuisine: {metadata?.cuisine}</li>
+                <li>Category: {metadata?.category}</li>
+                <li>Link: {metadata?.link}</li>
             </ul>
         </>
     )

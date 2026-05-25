@@ -29,7 +29,7 @@ const GoogleFileBrowser: React.FC<FileBrowser> = ({
 
             throw new Error(response.error)
         } catch (error) {
-            setFilesError(error)
+            setFilesError(error.message)
         } finally {
             setLoadingFiles(false)
         }
@@ -41,7 +41,7 @@ const GoogleFileBrowser: React.FC<FileBrowser> = ({
                 Connect Google Account
             </button>
             <button onClick={logout}>Sign Out</button>
-            {error && <p style={{color: 'red'}}>{error}</p>}
+            {!!error && <p style={{color: 'red'}}>{error}</p>}
             {user && (
                 <>
                     <h3>Welcome, {user.displayName}</h3>

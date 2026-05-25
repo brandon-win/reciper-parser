@@ -18,15 +18,47 @@ const App: React.FC = () => {
     const [selectedFile, setSelectedFile] = useState<DriveFile | null>(
         JSON.parse(localStorage.getItem(LOCALSTORAGE_FILE_KEY)) ?? null
     )
+    const [error, setError] = useState<string | null>(null)
     
     const getWebsiteInfo = async () => {
-        const {data} = await chrome.runtime.sendMessage({action: 'PARSE_SITE'})
-        setMetadata(data)
+
+        try {
+            const {success, data} = await chrome.runtime.sendMessage({action: 'PARSE_SITE'})
+            if (!success) {
+                throw new Error('Failed to parse website metadata')
+            }
+
+            setMetadata(data)
+        } catch (error) {
+            setError(error.message)
+        }
     }
 
     const selectAndCacheFileData = (file) => {
         setSelectedFile(file)
-        localStorage.setItem(LOCALSTORAGE_FILE_KEY, file)
+        localStorage.setItem(LOCALSTORAGE_FILE_KEY, JSON.stringify(file))
+    }
+
+    const appendSelectedFileWithMetadata = async (
+        file: DriveFile, metadata: RecipeMetaData
+    ) => {
+        setError(null)
+        try {
+            if (!metadata.link) {
+                throw new Error('You must have a URL in the metadata to submit to a sheet')
+            }
+
+            const response = await chrome.runtime.sendMessage({ 
+                action: "APPEND_TO_SHEET",
+                spreadsheetId: file.id,
+                metadata
+            })
+            if (!response.success) {
+                throw new Error(response.error)
+            }
+        } catch (error) {
+            setError(error.message)
+        }
     }
 
     return (
@@ -36,6 +68,12 @@ const App: React.FC = () => {
                 metadata={metadata}
                 onGetRecipeButtonClick={getWebsiteInfo}
             />
+            {selectedFile && 
+                <button onClick={() => appendSelectedFileWithMetadata(selectedFile, metadata)}>
+                    Append Metadata to {selectedFile.name}
+                </button>
+            }
+            {!!error && <div className='error'>{error}</div>}
             <GoogleFileBrowser 
                 selectedFile={selectedFile}
                 onSelectFileClick={selectAndCacheFileData}

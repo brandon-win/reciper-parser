@@ -88,6 +88,52 @@ chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
         .catch((error) => sendResponse({success: false, error: `Failed to get recipe data. ${error.message}`}))
     }
 
+    if (request.action === "APPEND_TO_SHEET") {
+      const { spreadsheetId, metadata } = request;
+      new Promise((resolve, reject) => {
+        chrome.identity.getAuthToken({
+          interactive: true,
+          scopes: [
+            "https://www.googleapis.com/auth/spreadsheets"
+          ]
+        }, (token) => {
+          if (chrome.runtime.lastError || !token) reject(chrome.runtime.lastError);
+          else resolve(token);
+        });
+      })
+        .then(async (token) => {
+          const metaRes = await fetch(
+            `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?fields=sheets.properties.title`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          const metaData = await metaRes.json();
+          const firstSheet = metaData.sheets?.[0]?.properties?.title ?? "Sheet1";
+          const range = encodeURIComponent(firstSheet);
+          const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?valueInputOption=USER_ENTERED`;
+          const row = [
+            metadata.recipeName,
+            metadata.category ?? "",
+            metadata.cuisine ?? "",
+            "",
+            metadata.link
+          ];
+          const res = await fetch(url, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ values: [row] })
+          });
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error?.message ?? `HTTP ${res.status}`);
+          }
+          sendResponse({ success: true });
+        })
+        .catch((error) => sendResponse({ success: false, error: `Failed to append to sheet: ${error.message}` }));
+    }
+
     if (request.action === "LIST_DRIVE_FILES") {
       new Promise((resolve, reject) => {
         chrome.identity.getAuthToken({
@@ -106,7 +152,6 @@ chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
           const res = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` }
           });
-          console.log({res})
           const data = await res.json();
           sendResponse({ success: true, files: data.files });
         })
