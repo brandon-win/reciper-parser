@@ -31,8 +31,7 @@ const UrlParser: React.FC<IUrlParser> = ({metadata, onGetRecipeButtonClick}) => 
             <button
                 onClick={onGetRecipeButtonClick}
                 className="w-full px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-                Get Recipe Metadata
+            >Get Recipe Metadata
             </button>
 
         </div>
