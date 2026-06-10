@@ -15,7 +15,7 @@ build
 build.crx
 build.pem
 build.zip
-
+key.pem
 
 # Editor directories and files
 .vscode/*

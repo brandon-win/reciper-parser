@@ -1,5 +1,6 @@
 {
     "name": "Brandon's Recipe Parser",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1EiYmNWZTiYR8AfUYFguuHI3p92TAYRCsRdVrFue2HKwBeYf90hGv2pyQ6eFYbbDhD3Lt7zLKYwynb4J9vdFKgyy3eZ3Srf+R2bDl3PystNpzyEIN6/9dHdSC8O6w2IYhrRattqiBtSrVEKK3GZathwwnH04r1qhkBF7sNTaiMeFRlPyYXH5EIN+8ckstzXTBPbptBXDeF7J+SyoSlwdS3hN+cKIL7FFbwnyAGT+mnEv417cgks0YL+auP25/Evfh50QchrREDiUx5W8iWMIoqZD1rfXlkhi9gh1sT/67STpJfdLrgpnM4vCwCLTUT5ilmhQ54hGBovsCSfhcr8HeQIDAQAB",
     "description": "This extension is intended to be used to gather recipe metadata to a specific google doc.",
     "version": "1.0.0",
     "manifest_version": 3,
