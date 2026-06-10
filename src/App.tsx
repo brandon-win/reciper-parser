@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {UrlParser} from './UrlParser'
 import { AuthProvider } from './contexts/AuthContext.tsx'
-import {GoogleFileBrowser} from './GoogleFileBrowser'
+import {GoogleFileBrowser} from './GoogleFileBrowser.tsx'
 import type {RecipeMetaData, DriveFile} from './types'
 
 const LOCALSTORAGE_FILE_KEY = 'GoogleSheetOutputFile'
@@ -62,15 +62,17 @@ const App: React.FC = () => {
     }
 
     return (
-        <section className='container'>
+        <section className='container p-2'>
             <h1>Recipe browser</h1>   
             <UrlParser 
                 metadata={metadata}
                 onGetRecipeButtonClick={getWebsiteInfo}
             />
-            {selectedFile && 
-                <button onClick={() => appendSelectedFileWithMetadata(selectedFile, metadata)}>
-                    Append Metadata to {selectedFile.name}
+            {selectedFile &&
+                <button
+                    onClick={() => appendSelectedFileWithMetadata(selectedFile, metadata)}
+                    className="w-full px-3 py-1.5 text-xs font-medium bg-green-600 text-white rounded hover:bg-green-700 truncate"
+                >Append to {selectedFile.name}
                 </button>
             }
             {!!error && <div className='error'>{error}</div>}

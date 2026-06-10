@@ -51,7 +51,7 @@
             category: normalizeMetadataField(recipeObject.recipeCategory as string | string[]),
             link
         } as RecipeMetaData
-        console.log('returned recipe', recipe)
+        
         return recipe
     }
 
